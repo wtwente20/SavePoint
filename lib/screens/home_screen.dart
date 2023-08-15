@@ -1,4 +1,3 @@
-import 'package:expandable/expandable.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -10,40 +9,137 @@ class _HomeScreenState extends State<HomeScreen> {
   Map<String, List<String>> categories = {
     'Books': [],
     'Video Games': [],
-    'Tabletop RPGs': [],
+    'TRPGs': []
   };
+
+  void _addNewCategory(String category) {
+    setState(() {
+      categories[category] = [];
+    });
+  }
+
+  void _addNewEntry(String category) async {
+    final newEntry = await _showAddEntryDialog(context);
+    if (newEntry != null && newEntry.isNotEmpty) {
+      setState(() {
+        categories[category]?.add(newEntry);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Home')),
-      body: ListView(
-        children: categories.keys.map((category) {
-          return Card(
-            child: ExpandablePanel(
-              header: Text(category),
-              collapsed: Text('Tap to view entries'),
-              expanded: categories[category]?.isEmpty ?? true
-                  ? ElevatedButton(
-                      onPressed: () {
-                        // TODO: Navigate to add entry screen or handle adding entry
-                      },
-                      child: Text('Add Entry'),
-                    )
-                  : ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: categories[category]?.length ?? 0,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          title: Text(categories[category]![index]),
-                        );
-                      },
-                    ),
-            ),
-          );
-        }).toList(),
+      appBar: AppBar(title: Text('Your Categories')),
+      body: Column(
+        children: [
+          Expanded(
+  child: ListView.builder(
+    itemCount: categories.keys.length,
+    itemBuilder: (ctx, index) {
+      String key = categories.keys.elementAt(index);
+      return Card(
+        child: ExpansionTile(
+          title: Text(key),
+          children: [
+            
+            ...categories[key]!.map((entry) => ListTile(title: Text(entry))),
+            
+            // Add the Divider here to separate "Add Entry" from the rest
+            Divider(),
+            
+            ListTile(
+              leading: Icon(Icons.add_box, color: Colors.green), // Add an icon for visibility
+              title: Text(
+                'Add Entry',
+                style: TextStyle(
+                  color: Colors.green, // Make the text green for emphasis
+                  fontWeight: FontWeight.bold // Make the text bold for added emphasis
+                ),
+              ),
+              onTap: () => _addNewEntry(key),
+            )
+          ],
+        ),
+      );
+    },
+  ),
+),
+          ElevatedButton.icon(
+            icon: Icon(Icons.add),
+            label: Text('Add New Category'),
+            onPressed: () async {
+              // This will show a dialog to add a new category
+              final newCategory = await _showAddCategoryDialog(context);
+              if (newCategory != null && newCategory.isNotEmpty) {
+                _addNewCategory(newCategory);
+              }
+            },
+          )
+        ],
       ),
+    );
+  }
+
+  Future<String?> _showAddCategoryDialog(BuildContext context) {
+    TextEditingController _categoryController = TextEditingController();
+
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Add New Category'),
+          content: TextField(
+            controller: _categoryController,
+            decoration: InputDecoration(labelText: 'Category Name'),
+          ),
+          actions: [
+            ElevatedButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();  // Closes the dialog
+              },
+            ),
+            ElevatedButton(
+              child: Text('Add'),
+              onPressed: () {
+                Navigator.of(context).pop(_categoryController.text);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<String?> _showAddEntryDialog(BuildContext context) {
+    TextEditingController _entryController = TextEditingController();
+
+    return showDialog<String>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Add New Entry'),
+          content: TextField(
+            controller: _entryController,
+            decoration: InputDecoration(labelText: 'Entry Name'),
+          ),
+          actions: [
+            ElevatedButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();  // Closes the dialog
+              },
+            ),
+            ElevatedButton(
+              child: Text('Add'),
+              onPressed: () {
+                Navigator.of(context).pop(_entryController.text);
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
