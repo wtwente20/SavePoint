@@ -51,6 +51,9 @@ dependencies:
   #Expandable
   expandable: ^5.0.1
 
+  #Riverpod
+  flutter_riverpod: ^2.3.6
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
