@@ -34,7 +34,7 @@ class TitleCard extends ConsumerWidget {
                 ))
                     .then((result) {
                   if (result != null) {
-                    // Use a Riverpod provider to handle any updates or deletions if necessary
+                    // Handle deletions
                     if (result.containsKey('delete') && result['delete']) {
                       final updatedNotes = List<Note>.from(titleNotes)
                         ..remove(note);
@@ -46,14 +46,14 @@ class TitleCard extends ConsumerWidget {
                             .read(entryListProvider.notifier)
                             .updateEntry(index, updatedEntry);
                       }
-                    } else {
-                      final updatedNote = Note(
-                        noteTitle: result['newTitle'] as String,
-                        content: result['note'] as String,
-                      );
+                    }
+                    // Handle updates
+                    else if (result.containsKey('updatedNote')) {
+                      final updatedNote = result['updatedNote'] as Note;
 
                       final updatedNotes = List<Note>.from(titleNotes)
-                        ..add(updatedNote);
+                        ..remove(note) // Remove the old note
+                        ..add(updatedNote); // Add the updated note
                       final updatedEntry =
                           titleEntry.copyWith(notes: updatedNotes);
                       final index = allEntries.indexOf(titleEntry);

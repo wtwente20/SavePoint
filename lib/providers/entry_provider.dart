@@ -56,6 +56,26 @@ class EntryListNotifier extends StateNotifier<List<Entry>> {
     state = [...state, Entry(category: category, title: '', notes: [])];
   }
 
+  void updateNote(Entry entry, Note oldNote, Note newNote) {
+    // Find the index of the entry
+    final entryIndex = state.indexOf(entry);
+
+    if (entryIndex == -1) return; // Entry not found
+
+    // Find the note inside this entry
+    final noteIndex = state[entryIndex].notes.indexOf(oldNote);
+
+    if (noteIndex == -1) return; // Note not found
+
+    // Create a new list of notes with the updated note
+    final updatedNotes = List<Note>.from(state[entryIndex].notes)
+      ..[noteIndex] = newNote;
+
+    // Update the entry in the state
+    state[entryIndex] = state[entryIndex].copyWith(notes: updatedNotes);
+    state = List<Entry>.from(state); // Trigger a rebuild
+  }
+
   void updateEntryTitle(String category, String oldEntryTitle, String newEntryTitle) {
     final index = state.indexWhere((e) => e.title == oldEntryTitle && e.category == category);
     if (index != -1) {

@@ -14,13 +14,13 @@ class NoteViewScreen extends StatefulWidget {
 
 class _NoteViewScreenState extends State<NoteViewScreen> {
   late TextEditingController notesController;
-  late TextEditingController noteTitleController;  // Renamed to make it more intuitive
+  late TextEditingController noteTitleController;
 
   @override
   void initState() {
     super.initState();
-    notesController = TextEditingController(text: widget.noteData.content);  // Adjusted for the new structure
-    noteTitleController = TextEditingController(text: widget.noteData.noteTitle);  // Adjusted for the new structure
+    notesController = TextEditingController(text: widget.noteData.content);
+    noteTitleController = TextEditingController(text: widget.noteData.noteTitle);
   }
 
   @override
@@ -31,12 +31,18 @@ class _NoteViewScreenState extends State<NoteViewScreen> {
   }
 
   void _saveChanges() {
-    Note updatedNote = Note(
-      noteTitle: noteTitleController.text,
-      content: notesController.text,
-    );
+    if (notesController.text.isNotEmpty && noteTitleController.text.isNotEmpty) {
+      Note updatedNote = Note(
+        noteTitle: noteTitleController.text,
+        content: notesController.text,
+      );
 
-    Navigator.pop(context, {'updatedNote': updatedNote});
+      Navigator.pop(context, {'updatedNote': updatedNote});
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Title and Note content cannot be empty!')),
+      );
+    }
   }
 
   @override
