@@ -4,12 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'screens/home_screen.dart';
 
 void main() => runApp(
-  ProviderScope(
-    child: MyApp(),
+  const ProviderScope(
+    child: SavePoint(),
   ),
 );
 
-class MyApp extends StatelessWidget {
+class SavePoint extends StatelessWidget {
+  const SavePoint ({super.key});
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

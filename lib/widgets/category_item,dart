@@ -1,0 +1,30 @@
+class CategoryItem extends StatelessWidget {
+  final String categoryName;
+  final List<String> titles;
+  final Function(String) onAddTitle;
+
+  CategoryItem({
+    required this.categoryName,
+    required this.titles,
+    required this.onAddTitle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ExpansionTile(
+        title: Text(categoryName),
+        children: [
+          ...titles.map((title) => ListTile(
+                title: Text(title),
+                onTap: () {
+                  // TODO: Navigate to TitleDetailsScreen
+                },
+              )),
+          const Divider(),
+          AddTitleButton(onAddTitle: () => onAddTitle(categoryName))
+        ],
+      ),
+    );
+  }
+}

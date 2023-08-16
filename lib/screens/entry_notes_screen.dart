@@ -2,30 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:savepoint_app/providers/category_entries_notifier.dart';
 
-class EntryNotesScreen extends ConsumerWidget {
-  final String category;
-  final String entry;
-  final Map<String, String> notesMap;
+import '../data/entry.dart';
 
-  EntryNotesScreen({required this.category, required this.entry, required this.notesMap});
-  
+class EntryNotesScreen extends ConsumerWidget {
+  final Entry entryData;
+
+  EntryNotesScreen({required this.entryData});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final categoryEntries = ref.watch(categoryEntriesProvider)!;
-    final notesForCategory = categoryEntries[category];
-    final noteText =
-        (notesForCategory != null) ? notesForCategory[entry] : null;
+    final notesForCategory = categoryEntries[entryData.category];
+    final noteText = notesForCategory?[entryData.title];
+
     final notesController = TextEditingController(text: noteText ?? "");
+    final entryNameController = TextEditingController(text: entryData.title);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(entry),
+        title: Text(entryData.title),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            TextField(
+              controller: entryNameController,
+              decoration: InputDecoration(labelText: 'Entry Name'),
+            ),
             TextField(
               controller: notesController,
               maxLines: null,
@@ -33,12 +37,24 @@ class EntryNotesScreen extends ConsumerWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                ref.read(categoryEntriesProvider.notifier).updateEntry(
-                      category,
-                      entry,
-                      notesController.text,
-                    );
-                Navigator.of(context).pop();
+                if (entryData.title != entryNameController.text) {
+                  ref.read(categoryEntriesProvider.notifier).updateEntryTitle(
+                        entryData.category,
+                        entryData.title,
+                        entryNameController.text,
+                      );
+                }
+
+                ref.read(categoryEntriesProvider.notifier).updateEntry(Entry(
+                    category: entryData.category,
+                    title: entryNameController.text,
+                    note: notesController.text));
+
+                Navigator.of(context).pop({
+                  'oldTitle': entryData.title,
+                  'newTitle': entryNameController.text,
+                  'note': notesController.text
+                });
               },
               child: Text("Save Notes"),
             )
