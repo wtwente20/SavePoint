@@ -17,7 +17,7 @@ class HomeScreen extends ConsumerWidget {
     void _addNewCategory(String category) {
       ref
           .read(entryListProvider.notifier)
-          .addEntry(Entry(category: category, title: '', note: ''));
+          .addEntry(Entry(category: category, title: '', notes: []));
     }
 
     void _addNewTitle(String category) async {
@@ -27,37 +27,34 @@ class HomeScreen extends ConsumerWidget {
       if (newTitle != null && newTitle.isNotEmpty) {
         ref
             .read(entryListProvider.notifier)
-            .addEntry(Entry(category: category, title: newTitle, note: ''));
+            .addEntry(Entry(category: category, title: newTitle, notes: []));
       }
     }
 
     void _addOrUpdateEntry(String category, String title) async {
-  final result = await navigatorKey.currentState!.push<Map<String, String>>(
-    MaterialPageRoute(builder: (BuildContext context) => EntryNotesScreen(entryData: Entry(category: category, title: title, note: ''))),
-  );
-
-  if (result != null && result['note']?.isNotEmpty == true) {
-    final oldTitle = result['oldTitle'] ?? '';
-    final newNoteTitle = result['newTitle'] ?? '';
-    final newNote = result['note'] ?? '';
-
-    final index = entries.indexWhere((e) => e.category == category && e.title == oldTitle);
-    
-    if (index != -1) {
-      final updatedEntry = Entry(
-        category: category,
-        title: oldTitle,
-        noteTitle: newNoteTitle,
-        note: newNote,
+      final result =
+          await navigatorKey.currentState!.push<Map<String, dynamic>>(
+        MaterialPageRoute(
+            builder: (BuildContext context) => EntryNotesScreen(
+                entryData: Entry(category: category, title: title, notes: []))),
       );
-      
-      ref.read(entryListProvider.notifier).updateEntry(index, updatedEntry);
-    } else {
-      // Handle the case where the entry was not found
-    }
-  }
-}
 
+      if (result != null && result['updatedNote'] != null) {
+        final oldTitle = result['oldTitle'] ?? '';
+        final updatedNote = result['updatedNote'] as Note;
+        final index = entries
+            .indexWhere((e) => e.category == category && e.title == oldTitle);
+
+        if (index != -1) {
+          final entry = entries[index];
+          final updatedNotes = List<Note>.from(entry.notes)..add(updatedNote);
+          final updatedEntry = entry.copyWith(notes: updatedNotes);
+          ref.read(entryListProvider.notifier).updateEntry(index, updatedEntry);
+        } else {
+          // Handle the case where the entry was not found
+        }
+      }
+    }
 
     final categories = entries.map((e) => e.category).toSet().toList();
 

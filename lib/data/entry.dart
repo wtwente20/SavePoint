@@ -1,27 +1,35 @@
 class Entry {
   final String category;
   final String title;
-  final String noteTitle;
-  final String note;
+  final List<Note> notes;  // A list of Note objects
 
   Entry({
     required this.category,
     required this.title,
-    this.noteTitle = '',    // Default is empty.
-    required this.note,
+    required this.notes, // Ensure that you always initialize this list when creating an Entry object.
   });
 
+  // A utility method to copy an Entry object and override specific properties if needed.
   Entry copyWith({
     String? category,
     String? title,
-    String? noteTitle,
-    String? note,
+    List<Note>? notes,
   }) {
     return Entry(
       category: category ?? this.category,
       title: title ?? this.title,
-      noteTitle: noteTitle ?? this.noteTitle,
-      note: note ?? this.note,
+      notes: notes ?? this.notes,
     );
   }
 }
+
+class Note {
+  final String noteTitle;
+  final String content;
+
+  Note({
+    required this.noteTitle,
+    required this.content,
+  });
+}
+

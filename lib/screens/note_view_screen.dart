@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import '../data/entry.dart';
 
 class NoteViewScreen extends StatefulWidget {
-  final Entry noteData;
+  final Entry entryData;
+  final Note noteData;  // We'll pass the specific Note object for editing
 
-  NoteViewScreen({required this.noteData});
+  NoteViewScreen({required this.entryData, required this.noteData});
 
   @override
   _NoteViewScreenState createState() => _NoteViewScreenState();
@@ -13,28 +14,26 @@ class NoteViewScreen extends StatefulWidget {
 
 class _NoteViewScreenState extends State<NoteViewScreen> {
   late TextEditingController notesController;
-  late TextEditingController entryNameController;
+  late TextEditingController noteTitleController;  // Renamed to make it more intuitive
 
   @override
   void initState() {
     super.initState();
-    notesController = TextEditingController(text: widget.noteData.note);
-    entryNameController = TextEditingController(text: widget.noteData.noteTitle);
+    notesController = TextEditingController(text: widget.noteData.content);  // Adjusted for the new structure
+    noteTitleController = TextEditingController(text: widget.noteData.noteTitle);  // Adjusted for the new structure
   }
 
   @override
   void dispose() {
     notesController.dispose();
-    entryNameController.dispose();
+    noteTitleController.dispose();
     super.dispose();
   }
 
   void _saveChanges() {
-    Entry updatedNote = Entry(
-      category: widget.noteData.category,
-      title: widget.noteData.title, // Keeping the original title intact
-      noteTitle: entryNameController.text,
-      note: notesController.text,
+    Note updatedNote = Note(
+      noteTitle: noteTitleController.text,
+      content: notesController.text,
     );
 
     Navigator.pop(context, {'updatedNote': updatedNote});
@@ -49,7 +48,6 @@ class _NoteViewScreenState extends State<NoteViewScreen> {
           IconButton(
             icon: Icon(Icons.delete),
             onPressed: () {
-              // Logic to delete the note
               Navigator.pop(context, {'delete': true});
             },
           ),
@@ -60,7 +58,7 @@ class _NoteViewScreenState extends State<NoteViewScreen> {
         child: Column(
           children: [
             TextField(
-              controller: entryNameController,
+              controller: noteTitleController,
               decoration: InputDecoration(labelText: 'Note Title'),
             ),
             Expanded(

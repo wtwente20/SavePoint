@@ -2,41 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/entry.dart';
-import '../providers/entry_provider.dart';  // Import the unified provider here
+import '../providers/entry_provider.dart'; // Import the unified provider here
 
 class EntryNotesScreen extends ConsumerWidget {
   final Entry entryData;
+  final Note? editNote;
 
-  EntryNotesScreen({required this.entryData});
+  EntryNotesScreen({required this.entryData, this.editNote});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final allEntries = ref.watch(entryListProvider);
-    final currentEntry = allEntries.firstWhere(
-      (e) => e.category == entryData.category && e.title == entryData.title,
-      orElse: () => entryData,
-    );
-
-    final notesController = TextEditingController(text: currentEntry.note);
-    final entryNameController = TextEditingController(text: currentEntry.title);
-    final noteTitleController = TextEditingController(text: currentEntry.noteTitle);  // New controller for the note title
+    final notesController = TextEditingController(text: editNote?.content);
+    final noteTitleController =
+        TextEditingController(text: editNote?.noteTitle);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(currentEntry.title),
+        title: Text(entryData.title),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             TextField(
-              controller: entryNameController,
-              decoration: InputDecoration(labelText: 'Entry Name'),
-            ),
-            TextField(
               controller: noteTitleController,
               decoration: InputDecoration(labelText: 'Note Title'),
-            ), // New TextField for the note title
+            ),
             TextField(
               controller: notesController,
               maxLines: null,
@@ -44,26 +35,30 @@ class EntryNotesScreen extends ConsumerWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                if (currentEntry.title != entryNameController.text) {
-                  ref.read(entryListProvider.notifier).updateEntryTitle(
-                    currentEntry.category,
-                    currentEntry.title,
-                    entryNameController.text,
-                  );
-                }
-
-                ref.read(entryListProvider.notifier).updateEntry(
-                  allEntries.indexOf(currentEntry),
-                  currentEntry.copyWith(
-                    title: entryNameController.text,
-                    note: notesController.text,
-                    noteTitle: noteTitleController.text,  // Saving the note title
-                  ),
+                final newNote = Note(
+                  noteTitle: noteTitleController.text,
+                  content: notesController.text,
                 );
+
+                if (editNote != null) {
+                  // Handle editing logic (update the note in the list)
+                  ref.read(entryListProvider.notifier).updateNoteInTitle(
+                      entryData.category,
+                      entryData.title,
+                      editNote!.noteTitle,
+                      newNote);
+                } else {
+                  // Handle adding logic (add the note to the list)
+                  ref.read(entryListProvider.notifier).addNoteToTitle(
+                        entryData.category,
+                        entryData.title,
+                        newNote,
+                      );
+                }
 
                 Navigator.of(context).pop();
               },
-              child: Text("Save Notes"),
+              child: Text(editNote == null ? "Add Note" : "Update Note"),
             )
           ],
         ),
