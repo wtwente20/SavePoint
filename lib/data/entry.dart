@@ -10,4 +10,18 @@ class Entry {
     this.noteTitle = '',    // Default is empty.
     required this.note,
   });
+
+  Entry copyWith({
+    String? category,
+    String? title,
+    String? noteTitle,
+    String? note,
+  }) {
+    return Entry(
+      category: category ?? this.category,
+      title: title ?? this.title,
+      noteTitle: noteTitle ?? this.noteTitle,
+      note: note ?? this.note,
+    );
+  }
 }
