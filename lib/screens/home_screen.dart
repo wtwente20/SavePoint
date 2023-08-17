@@ -19,7 +19,7 @@ class HomeScreen extends ConsumerWidget {
     void _addNewCategory(String category) {
       ref
           .read(entryListProvider.notifier)
-          .addEntry(Entry(category: category, title: '', notes: []));
+          .addEntry(Entry(id: '', category: category, title: '', notes: []));
     }
 
     void _addNewTitle(String category) async {
@@ -27,9 +27,8 @@ class HomeScreen extends ConsumerWidget {
       final newTitle = await titleDialog.show(context);
 
       if (newTitle != null && newTitle.isNotEmpty) {
-        ref
-            .read(entryListProvider.notifier)
-            .addEntry(Entry(category: category, title: newTitle, notes: []));
+        ref.read(entryListProvider.notifier).addEntry(
+            Entry(id: '', category: category, title: newTitle, notes: []));
       }
     }
 
@@ -38,7 +37,8 @@ class HomeScreen extends ConsumerWidget {
           await navigatorKey.currentState!.push<Map<String, dynamic>>(
         MaterialPageRoute(
             builder: (BuildContext context) => AddEntryScreen(
-                entryData: Entry(category: category, title: title, notes: []))),
+                entryData: Entry(
+                    id: '', category: category, title: title, notes: []))),
       );
 
       if (result != null && result['updatedNote'] != null) {
@@ -51,7 +51,9 @@ class HomeScreen extends ConsumerWidget {
           final entry = entries[index];
           final updatedNotes = List<Note>.from(entry.notes)..add(updatedNote);
           final updatedEntry = entry.copyWith(notes: updatedNotes);
-          ref.read(entryListProvider.notifier).updateEntry(index, updatedEntry);
+          ref
+              .read(entryListProvider.notifier)
+              .updateEntry(entry.id, updatedEntry);
         } else {
           // Handle the case where the entry was not found
         }

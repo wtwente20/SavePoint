@@ -40,7 +40,6 @@ class TitleCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final allEntries = ref.watch(entryListProvider);
     final titleNotes = titleEntry.notes;
 
     return Dismissible(
@@ -54,11 +53,7 @@ class TitleCard extends ConsumerWidget {
       direction: DismissDirection.startToEnd,
       confirmDismiss: (direction) => _confirmDeletion(context),
       onDismissed: (direction) {
-        // Implement the removal logic here
-        final index = allEntries.indexOf(titleEntry);
-        if (index != -1) {
-          ref.read(entryListProvider.notifier).deleteEntry(index);
-        }
+        ref.read(entryListProvider.notifier).deleteEntry(titleEntry.id);
       },
       child: ExpansionTile(
         title: Text(titleEntry.title),
@@ -81,12 +76,9 @@ class TitleCard extends ConsumerWidget {
                           ..remove(note);
                         final updatedEntry =
                             titleEntry.copyWith(notes: updatedNotes);
-                        final index = allEntries.indexOf(titleEntry);
-                        if (index != -1) {
-                          ref
-                              .read(entryListProvider.notifier)
-                              .updateEntry(index, updatedEntry);
-                        }
+                        ref
+                            .read(entryListProvider.notifier)
+                            .updateEntry(titleEntry.id, updatedEntry);
                       }
                       // Handle updates
                       else if (result.containsKey('updatedNote')) {
@@ -97,12 +89,9 @@ class TitleCard extends ConsumerWidget {
                           ..add(updatedNote);
                         final updatedEntry =
                             titleEntry.copyWith(notes: updatedNotes);
-                        final index = allEntries.indexOf(titleEntry);
-                        if (index != -1) {
-                          ref
-                              .read(entryListProvider.notifier)
-                              .updateEntry(index, updatedEntry);
-                        }
+                        ref
+                            .read(entryListProvider.notifier)
+                            .updateEntry(titleEntry.id, updatedEntry);
                       }
                     }
                   });

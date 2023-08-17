@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "40576210743",
+    "firebase_url": "https://savepoint-9ea93-default-rtdb.firebaseio.com",
+    "project_id": "savepoint-9ea93",
+    "storage_bucket": "savepoint-9ea93.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:40576210743:android:20e87616c522ea8a9fecb2",
+        "android_client_info": {
+          "package_name": "com.example.savepoint_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "40576210743-pspc3g8oo8hbb856akcvno9sfgfn3n8b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGuMYh43yeVePrx1zjMD-vw9Hkfw3aZy8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "40576210743-8sde5i7tc5iui65h7op8qa46epgskcgt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -53,6 +53,13 @@ dependencies:
 
   #Riverpod
   flutter_riverpod: ^2.3.6
+  
+  #http
+  http: ^1.1.0
+
+  #firebase core
+  firebase_core: ^2.15.1
+  firebase_database: ^10.2.5
 
 dev_dependencies:
   flutter_test:

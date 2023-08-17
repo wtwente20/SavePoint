@@ -27,22 +27,39 @@ class CategoryCard extends ConsumerWidget {
         .toList();
 
     return Card(
-      child: ExpansionTile(
-        title: Text(categoryKey),
-        children: [
-          ...categoryTitles.map((title) {
-            final titleEntry = entries.firstWhere((e) => e.title == title);
-            return TitleCard(
-              titleEntry: titleEntry,  // Only pass the titleEntry parameter
-            );
-          }).toList(),
-          ListTile(
-            leading: const Icon(Icons.add_box, color: Colors.green),
-            title: const Text('Add Title'),
-            onTap: () => addNewTitleCallback(categoryKey),
+  child: ExpansionTile(
+    title: Row(
+      children: [
+        Text(categoryKey),
+        SizedBox(width: 8.0),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
+          decoration: BoxDecoration(
+            color: Colors.blueAccent,
+            borderRadius: BorderRadius.circular(12.0),
           ),
-        ],
+          child: Text(
+            '${categoryTitles.length}',  // Display the number of titles
+            style: TextStyle(color: Colors.white, fontSize: 12.0),
+          ),
+        ),
+      ],
+    ),
+    children: [
+      ...categoryTitles.map((title) {
+        final titleEntry = entries.firstWhere((e) => e.title == title);
+        return TitleCard(
+          titleEntry: titleEntry,  // Only pass the titleEntry parameter
+        );
+      }).toList(),
+      ListTile(
+        leading: const Icon(Icons.add_box, color: Colors.green),
+        title: const Text('Add Title'),
+        onTap: () => addNewTitleCallback(categoryKey),
       ),
-    );
+    ],
+  ),
+);
+
   }
 }
