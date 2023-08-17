@@ -4,11 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/entry.dart';
 import '../providers/entry_provider.dart'; // Import the unified provider here
 
-class EntryNotesScreen extends ConsumerWidget {
+class AddEntryScreen extends ConsumerWidget {
   final Entry entryData;
   final Note? editNote;
 
-  EntryNotesScreen({required this.entryData, this.editNote});
+  AddEntryScreen({required this.entryData, this.editNote});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

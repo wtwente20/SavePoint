@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../data/entry.dart';
+import 'edit_entry_screen.dart';
 
 class NoteViewScreen extends StatefulWidget {
   final Entry entryData;
-  final Note noteData;  // We'll pass the specific Note object for editing
+  final Note noteData; // We'll pass the specific Note object for editing
 
   NoteViewScreen({required this.entryData, required this.noteData});
 
@@ -20,7 +21,8 @@ class _NoteViewScreenState extends State<NoteViewScreen> {
   void initState() {
     super.initState();
     notesController = TextEditingController(text: widget.noteData.content);
-    noteTitleController = TextEditingController(text: widget.noteData.noteTitle);
+    noteTitleController =
+        TextEditingController(text: widget.noteData.noteTitle);
   }
 
   @override
@@ -31,7 +33,8 @@ class _NoteViewScreenState extends State<NoteViewScreen> {
   }
 
   void _saveChanges() {
-    if (notesController.text.isNotEmpty && noteTitleController.text.isNotEmpty) {
+    if (notesController.text.isNotEmpty &&
+        noteTitleController.text.isNotEmpty) {
       Note updatedNote = Note(
         noteTitle: noteTitleController.text,
         content: notesController.text,
@@ -49,8 +52,21 @@ class _NoteViewScreenState extends State<NoteViewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('View & Edit Note'),
+        title: Text(widget.noteData.noteTitle),  // Note this change here
         actions: [
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => EditEntryScreen(
+                    entryData: widget.entryData,   // And here
+                    editNote: widget.noteData,     // And here
+                  ),
+                ),
+              );
+            },
+          ),
           IconButton(
             icon: Icon(Icons.delete),
             onPressed: () {
@@ -62,22 +78,14 @@ class _NoteViewScreenState extends State<NoteViewScreen> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextField(
-              controller: noteTitleController,
-              decoration: InputDecoration(labelText: 'Note Title'),
+            Text(
+              widget.noteData.noteTitle,  // And here
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            Expanded(
-              child: TextField(
-                controller: notesController,
-                maxLines: null,
-                decoration: InputDecoration(labelText: 'Your notes here...'),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: _saveChanges,
-              child: Text("Save Changes"),
-            ),
+            SizedBox(height: 16),
+            Text(widget.noteData.content),  // And here
           ],
         ),
       ),

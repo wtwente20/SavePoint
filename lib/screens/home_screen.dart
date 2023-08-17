@@ -6,7 +6,7 @@ import '../providers/entry_provider.dart';
 import '../widgets/category_card.dart';
 import '../widgets/category_dialog.dart';
 import '../widgets/title_dialog.dart';
-import 'entry_notes_screen.dart';
+import 'add_entry_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
   @override
@@ -35,7 +35,7 @@ class HomeScreen extends ConsumerWidget {
       final result =
           await navigatorKey.currentState!.push<Map<String, dynamic>>(
         MaterialPageRoute(
-            builder: (BuildContext context) => EntryNotesScreen(
+            builder: (BuildContext context) => AddEntryScreen(
                 entryData: Entry(category: category, title: title, notes: []))),
       );
 
@@ -66,10 +66,56 @@ class HomeScreen extends ConsumerWidget {
             child: ListView.builder(
               itemCount: categories.length,
               itemBuilder: (ctx, index) {
-                return CategoryCard(
-                  categoryKey: categories[index],
-                  addNewTitleCallback: _addNewTitle,
-                  addOrUpdateEntryCallback: _addOrUpdateEntry,
+                return Dismissible(
+                  key: ValueKey(
+                      categories[index]), // unique key based on the category
+                  background: Container(
+                    color: Colors.red,
+                    child: const Icon(Icons.delete, color: Colors.white),
+                    alignment: Alignment.centerRight,
+                    padding: EdgeInsets.only(right: 20),
+                  ),
+                  direction: DismissDirection.endToStart,
+                  onDismissed: (direction) {
+                    // Remove the category from data source
+                    String deletedCategory = categories[index];
+                    ref
+                        .read(entryListProvider.notifier)
+                        .removeCategory(deletedCategory);
+
+                    // Provide feedback to the user
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Category deleted')));
+                  },
+                  confirmDismiss: (direction) async {
+                    return await showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text("Delete Category?"),
+                        content: Text(
+                            "Are you sure you want to delete this category? All titles in this category will be lost."),
+                        actions: [
+                          TextButton(
+                            child: Text("Cancel"),
+                            onPressed: () {
+                              Navigator.of(context).pop(false);
+                            },
+                          ),
+                          TextButton(
+                            child: Text("Delete"),
+                            onPressed: () {
+                              Navigator.of(context).pop(true);
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                  child: CategoryCard(
+                    categoryKey: categories[index],
+                    addNewTitleCallback: _addNewTitle,
+                    addOrUpdateEntryCallback: _addOrUpdateEntry,
+                  ),
                 );
               },
             ),

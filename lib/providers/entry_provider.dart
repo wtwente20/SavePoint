@@ -3,11 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/entry.dart';
 
 class EntryListNotifier extends StateNotifier<List<Entry>> {
-  EntryListNotifier() : super([
-    Entry(category: 'Books', title: '', notes: []),
-    Entry(category: 'Video Games', title: '', notes: []),
-    Entry(category: 'Tabletop RPGs', title: '', notes: []),
-  ]);
+  EntryListNotifier()
+      : super([
+          Entry(category: 'Books', title: '', notes: []),
+          Entry(category: 'Video Games', title: '', notes: []),
+          Entry(category: 'Tabletop RPGs', title: '', notes: []),
+        ]);
 
   void addEntry(Entry entry) {
     state = [...state, entry];
@@ -26,7 +27,8 @@ class EntryListNotifier extends StateNotifier<List<Entry>> {
   }
 
   void addNoteToTitle(String category, String title, Note note) {
-    int index = state.indexWhere((e) => e.title == title && e.category == category);
+    int index =
+        state.indexWhere((e) => e.title == title && e.category == category);
     if (index != -1) {
       final entry = state[index];
       final updatedNotes = List<Note>.from(entry.notes)..add(note);
@@ -38,11 +40,14 @@ class EntryListNotifier extends StateNotifier<List<Entry>> {
     }
   }
 
-  void updateNoteInTitle(String category, String title, String oldNoteTitle, Note updatedNote) {
-    int index = state.indexWhere((e) => e.title == title && e.category == category);
+  void updateNoteInTitle(
+      String category, String title, String oldNoteTitle, Note updatedNote) {
+    int index =
+        state.indexWhere((e) => e.title == title && e.category == category);
     if (index != -1) {
       final entry = state[index];
-      final noteIndex = entry.notes.indexWhere((n) => n.noteTitle == oldNoteTitle);
+      final noteIndex =
+          entry.notes.indexWhere((n) => n.noteTitle == oldNoteTitle);
       if (noteIndex != -1) {
         final updatedNotes = List<Note>.from(entry.notes)
           ..[noteIndex] = updatedNote;
@@ -54,6 +59,10 @@ class EntryListNotifier extends StateNotifier<List<Entry>> {
 
   void addCategory(String category) {
     state = [...state, Entry(category: category, title: '', notes: [])];
+  }
+
+  void removeCategory(String category) {
+    state = state.where((entry) => entry.category != category).toList();
   }
 
   void updateNote(Entry entry, Note oldNote, Note newNote) {
@@ -76,8 +85,10 @@ class EntryListNotifier extends StateNotifier<List<Entry>> {
     state = List<Entry>.from(state); // Trigger a rebuild
   }
 
-  void updateEntryTitle(String category, String oldEntryTitle, String newEntryTitle) {
-    final index = state.indexWhere((e) => e.title == oldEntryTitle && e.category == category);
+  void updateEntryTitle(
+      String category, String oldEntryTitle, String newEntryTitle) {
+    final index = state
+        .indexWhere((e) => e.title == oldEntryTitle && e.category == category);
     if (index != -1) {
       final updatedEntry = state[index].copyWith(title: newEntryTitle);
       updateEntry(index, updatedEntry);
@@ -85,4 +96,5 @@ class EntryListNotifier extends StateNotifier<List<Entry>> {
   }
 }
 
-final entryListProvider = StateNotifierProvider<EntryListNotifier, List<Entry>>((ref) => EntryListNotifier());
+final entryListProvider = StateNotifierProvider<EntryListNotifier, List<Entry>>(
+    (ref) => EntryListNotifier());
