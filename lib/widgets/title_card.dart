@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/entry.dart';
 import '../providers/entry_provider.dart';
 import '../screens/add_entry_screen.dart';
-import '../screens/note_view_screen.dart';
+import '../screens/view_entry_screen.dart';
 import 'note_card.dart';
 
 class TitleCard extends ConsumerWidget {
@@ -71,7 +71,7 @@ class TitleCard extends ConsumerWidget {
                   Navigator.of(context)
                       .push(MaterialPageRoute(
                     builder: (context) =>
-                        NoteViewScreen(entryData: titleEntry, noteData: note),
+                        ViewEntryScreen(entryData: titleEntry, noteData: note),
                   ))
                       .then((result) {
                     if (result != null) {

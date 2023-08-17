@@ -1,7 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'providers/theme_provider.dart';  // Import your theme provider
 import 'screens/home_screen.dart';
+
+var kColorScheme = ColorScheme.fromSeed(
+  seedColor: Color.fromARGB(255, 10, 40, 175),
+);
+
+var kDarkColorScheme = ColorScheme.fromSeed(
+  brightness: Brightness.dark,
+  seedColor: const Color.fromARGB(255, 5, 99, 125),
+);
 
 void main() => runApp(
   const ProviderScope(
@@ -9,16 +19,22 @@ void main() => runApp(
   ),
 );
 
-class SavePoint extends StatelessWidget {
-  const SavePoint ({super.key});
+class SavePoint extends ConsumerWidget {
+  const SavePoint({super.key});
   
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode = ref.watch(themeProvider);
+
     return MaterialApp(
       title: 'SavePoint',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+      darkTheme: ThemeData.dark().copyWith(
+        // ... (all your dark theme configurations here)
       ),
+      theme: ThemeData().copyWith(
+        // ... (all your light theme configurations here)
+      ),
+      themeMode: themeMode,
       home: HomeScreen(),
     );
   }

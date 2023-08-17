@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/entry.dart';
 import '../providers/entry_provider.dart';
+import '../providers/theme_provider.dart';
 import '../widgets/category_card.dart';
 import '../widgets/category_dialog.dart';
 import '../widgets/title_dialog.dart';
@@ -13,6 +14,7 @@ class HomeScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final entries = ref.watch(entryListProvider);
     final navigatorKey = GlobalKey<NavigatorState>();
+    final themeMode = ref.watch(themeProvider);
 
     void _addNewCategory(String category) {
       ref
@@ -59,7 +61,17 @@ class HomeScreen extends ConsumerWidget {
     final categories = entries.map((e) => e.category).toSet().toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Your Categories')),
+      appBar: AppBar(title: const Text('SavePoint')),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          if (themeMode == ThemeMode.light) {
+            ref.read(themeProvider.notifier).state = ThemeMode.dark;
+          } else {
+            ref.read(themeProvider.notifier).state = ThemeMode.light;
+          }
+        },
+        child: Icon(Icons.brightness_6),
+      ),
       body: Column(
         children: [
           Expanded(

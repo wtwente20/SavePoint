@@ -3,17 +3,17 @@ import 'package:flutter/material.dart';
 import '../data/entry.dart';
 import 'edit_entry_screen.dart';
 
-class NoteViewScreen extends StatefulWidget {
+class ViewEntryScreen extends StatefulWidget {
   final Entry entryData;
   final Note noteData; // We'll pass the specific Note object for editing
 
-  NoteViewScreen({required this.entryData, required this.noteData});
+  ViewEntryScreen({required this.entryData, required this.noteData});
 
   @override
-  _NoteViewScreenState createState() => _NoteViewScreenState();
+  _ViewEntryScreenState createState() => _ViewEntryScreenState();
 }
 
-class _NoteViewScreenState extends State<NoteViewScreen> {
+class _ViewEntryScreenState extends State<ViewEntryScreen> {
   late TextEditingController notesController;
   late TextEditingController noteTitleController;
 
