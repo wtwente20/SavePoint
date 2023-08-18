@@ -19,7 +19,9 @@ class EntryListNotifier extends StateNotifier<List<Entry>> {
 
   Future<void> _loadEntries() async {
   try {
-    final DataSnapshot snapshot = (await databaseRef.once()).snapshot;
+    DataSnapshot snapshot = (await databaseRef.once()).snapshot;
+    print("Raw Firebase Data: ${snapshot.value}");
+
     List<Entry> entries = [];
 
     if (snapshot.value is Map<dynamic, dynamic>) {
@@ -49,16 +51,20 @@ class EntryListNotifier extends StateNotifier<List<Entry>> {
 
     for (var category in defaultCategories) {
       if (!entries.any((entry) => entry.category == category)) {
-        entries.add(Entry(id: 'default-${category.hashCode}', category: category, title: '', notes: []));
+        entries.add(Entry(
+            id: 'default-${category.hashCode}',
+            category: category,
+            title: '',
+            notes: []));
       }
     }
 
     state = entries;
+    print("Current state: $state");
   } catch (error) {
     print("Error loading entries: $error");
   }
 }
-
 
 
   Future<void> _saveEntry(Entry entry) async {
@@ -91,7 +97,7 @@ class EntryListNotifier extends StateNotifier<List<Entry>> {
 
     state.removeAt(index);
     try {
-      databaseRef.child('entries').child(id).remove();
+      databaseRef.child(id).remove();
     } catch (error) {
       print("Error deleting entry: $error");
     }
@@ -104,7 +110,8 @@ class EntryListNotifier extends StateNotifier<List<Entry>> {
       final entry = state[index];
       final updatedNotes = List<Note>.from(entry.notes)..add(note);
       final updatedEntry = entry.copyWith(notes: updatedNotes);
-      updateEntry(entry.id, updatedEntry);
+      updateEntry(entry.id,
+          updatedEntry); // Ensure this is correctly updating the database
     } else {
       addEntry(Entry(id: '', category: category, title: title, notes: [note]));
     }
@@ -148,6 +155,20 @@ class EntryListNotifier extends StateNotifier<List<Entry>> {
     final updatedEntry = state[entryIndex].copyWith(notes: updatedNotes);
     updateEntry(state[entryIndex].id, updatedEntry);
   }
+
+  void removeNoteFromEntry(Entry entry, Note note) {
+  final entryIndex = state.indexOf(entry);
+  if (entryIndex == -1) return;
+
+  // Remove the note from the entry
+  final updatedNotes = List<Note>.from(state[entryIndex].notes)..remove(note);
+
+  // Update the entry without the note
+  final updatedEntry = state[entryIndex].copyWith(notes: updatedNotes);
+  updateEntry(state[entryIndex].id, updatedEntry);
+}
+
+
 
   void updateEntryTitle(
       String category, String oldEntryTitle, String newEntryTitle) {

@@ -13,13 +13,12 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final entries = ref.watch(entryListProvider);
-    final navigatorKey = GlobalKey<NavigatorState>();
     final themeMode = ref.watch(themeProvider);
 
     void _addNewCategory(String category) {
       ref
           .read(entryListProvider.notifier)
-          .addEntry(Entry(id: '', category: category, title: '', notes: []));
+          .addCategory(category);
     }
 
     void _addNewTitle(String category) async {
@@ -34,7 +33,7 @@ class HomeScreen extends ConsumerWidget {
 
     void _addOrUpdateEntry(String category, String title) async {
       final result =
-          await navigatorKey.currentState!.push<Map<String, dynamic>>(
+          await Navigator.of(context).push<Map<String, dynamic>>(
         MaterialPageRoute(
             builder: (BuildContext context) => AddEntryScreen(
                 entryData: Entry(
@@ -44,35 +43,28 @@ class HomeScreen extends ConsumerWidget {
       if (result != null && result['updatedNote'] != null) {
         final oldTitle = result['oldTitle'] ?? '';
         final updatedNote = result['updatedNote'] as Note;
-        final index = entries
-            .indexWhere((e) => e.category == category && e.title == oldTitle);
-
-        if (index != -1) {
-          final entry = entries[index];
-          final updatedNotes = List<Note>.from(entry.notes)..add(updatedNote);
-          final updatedEntry = entry.copyWith(notes: updatedNotes);
-          ref
-              .read(entryListProvider.notifier)
-              .updateEntry(entry.id, updatedEntry);
-        } else {
-          // Handle the case where the entry was not found
-        }
+        
+        ref.read(entryListProvider.notifier).addNoteToTitle(category, oldTitle, updatedNote);
       }
     }
 
     final categories = entries.map((e) => e.category).toSet().toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('SavePoint')),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          if (themeMode == ThemeMode.light) {
-            ref.read(themeProvider.notifier).state = ThemeMode.dark;
-          } else {
-            ref.read(themeProvider.notifier).state = ThemeMode.light;
-          }
-        },
-        child: Icon(Icons.brightness_6),
+      appBar: AppBar(
+        title: const Text('SavePoint'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.brightness_6),
+            onPressed: () {
+              if (themeMode == ThemeMode.light) {
+                ref.read(themeProvider.notifier).state = ThemeMode.dark;
+              } else {
+                ref.read(themeProvider.notifier).state = ThemeMode.light;
+              }
+            },
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -81,8 +73,7 @@ class HomeScreen extends ConsumerWidget {
               itemCount: categories.length,
               itemBuilder: (ctx, index) {
                 return Dismissible(
-                  key: ValueKey(
-                      categories[index]), // unique key based on the category
+                  key: ValueKey(categories[index]),
                   background: Container(
                     color: Colors.red,
                     child: const Icon(Icons.delete, color: Colors.white),
@@ -91,13 +82,11 @@ class HomeScreen extends ConsumerWidget {
                   ),
                   direction: DismissDirection.endToStart,
                   onDismissed: (direction) {
-                    // Remove the category from data source
                     String deletedCategory = categories[index];
                     ref
                         .read(entryListProvider.notifier)
                         .removeCategory(deletedCategory);
 
-                    // Provide feedback to the user
                     ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text('Category deleted')));
                   },

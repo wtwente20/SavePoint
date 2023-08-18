@@ -16,21 +16,17 @@ class TitleCard extends ConsumerWidget {
     return await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
-            title: Text('Delete Title'),
-            content: Text(
+            title: const Text('Delete Title'),
+            content: const Text(
                 'Are you sure you want to delete this title and all its notes?'),
             actions: [
               TextButton(
-                child: Text('Cancel'),
-                onPressed: () {
-                  Navigator.of(ctx).pop(false);
-                },
+                child: const Text('Cancel'),
+                onPressed: () => Navigator.of(ctx).pop(false),
               ),
               TextButton(
-                child: Text('Delete'),
-                onPressed: () {
-                  Navigator.of(ctx).pop(true);
-                },
+                child: const Text('Delete'),
+                onPressed: () => Navigator.of(ctx).pop(true),
               ),
             ],
           ),
@@ -38,17 +34,37 @@ class TitleCard extends ConsumerWidget {
         false;
   }
 
+  void _handleNavigationResult(BuildContext context, WidgetRef ref, result, List<Note> titleNotes) {
+    if (result != null) {
+      // Handle deletions
+      if (result.containsKey('delete') && result['delete']) {
+        final updatedNotes = List<Note>.from(titleNotes)..remove(result['deletedNote']);
+        final updatedEntry = titleEntry.copyWith(notes: updatedNotes);
+        ref.read(entryListProvider.notifier).updateEntry(titleEntry.id, updatedEntry);
+      }
+      // Handle updates
+      else if (result.containsKey('updatedNote')) {
+        final updatedNote = result['updatedNote'] as Note;
+        final updatedNotes = List<Note>.from(titleNotes)
+          ..remove(result['originalNote'])
+          ..add(updatedNote);
+        final updatedEntry = titleEntry.copyWith(notes: updatedNotes);
+        ref.read(entryListProvider.notifier).updateEntry(titleEntry.id, updatedEntry);
+      }
+    }
+  }
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+Widget build(BuildContext context, WidgetRef ref) {
     final titleNotes = titleEntry.notes;
 
     return Dismissible(
-      key: ValueKey(titleEntry.title), // Unique key for the Dismissible
+      key: ValueKey('${titleEntry.title}-${titleNotes.length}'),
       background: Container(
         color: Colors.red,
-        child: Icon(Icons.delete, color: Colors.white, size: 36),
+        child: const Icon(Icons.delete, color: Colors.white, size: 36),
         alignment: Alignment.centerLeft,
-        padding: EdgeInsets.only(left: 20),
+        padding: const EdgeInsets.only(left: 20),
       ),
       direction: DismissDirection.startToEnd,
       confirmDismiss: (direction) => _confirmDeletion(context),
@@ -56,58 +72,35 @@ class TitleCard extends ConsumerWidget {
         ref.read(entryListProvider.notifier).deleteEntry(titleEntry.id);
       },
       child: ExpansionTile(
-        title: Text(titleEntry.title),
+        title: Text('${titleEntry.title} (${titleNotes.length})'),
         children: [
           if (titleNotes.isNotEmpty)
-            ...titleNotes.map((note) {
-              return NoteCard(
-                note: note,
-                onTap: () {
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(
-                    builder: (context) =>
-                        ViewEntryScreen(entryData: titleEntry, noteData: note),
-                  ))
-                      .then((result) {
-                    if (result != null) {
-                      // Handle deletions
-                      if (result.containsKey('delete') && result['delete']) {
-                        final updatedNotes = List<Note>.from(titleNotes)
-                          ..remove(note);
-                        final updatedEntry =
-                            titleEntry.copyWith(notes: updatedNotes);
-                        ref
-                            .read(entryListProvider.notifier)
-                            .updateEntry(titleEntry.id, updatedEntry);
-                      }
-                      // Handle updates
-                      else if (result.containsKey('updatedNote')) {
-                        final updatedNote = result['updatedNote'] as Note;
-
-                        final updatedNotes = List<Note>.from(titleNotes)
-                          ..remove(note)
-                          ..add(updatedNote);
-                        final updatedEntry =
-                            titleEntry.copyWith(notes: updatedNotes);
-                        ref
-                            .read(entryListProvider.notifier)
-                            .updateEntry(titleEntry.id, updatedEntry);
-                      }
-                    }
-                  });
-                },
-              );
-            }).toList(),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: titleNotes.length,
+              itemBuilder: (ctx, index) {
+                return NoteCard(
+                  note: titleNotes[index],
+                  onTap: () {
+                    Navigator.of(context)
+                        .push(MaterialPageRoute(
+                          builder: (context) => ViewEntryScreen(
+                              entryData: titleEntry, noteData: titleNotes[index]),
+                        ))
+                        .then((result) => _handleNavigationResult(context, ref, result, titleNotes));
+                  },
+                );
+              },
+            ),
           ListTile(
             leading: const Icon(Icons.add, color: Colors.blue),
             title: const Text('Add Note'),
             onTap: () {
               Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) {
-                  return AddEntryScreen(
-                    entryData: titleEntry,
-                  );
-                }),
+                MaterialPageRoute(
+                  builder: (context) => AddEntryScreen(entryData: titleEntry),
+                ),
               );
             },
           ),

@@ -1,13 +1,11 @@
 class Entry {
-  final String id;  // <-- New field for the unique ID
+  final String id; // <-- New field for the unique ID
   final String category;
   final String title;
   final List<Note> notes;
 
-  
-
   Entry({
-    required this.id,  // <-- New required parameter for the unique ID
+    required this.id, // <-- New required parameter for the unique ID
     required this.category,
     required this.title,
     required this.notes,
@@ -32,20 +30,47 @@ class Entry {
         'id': id,
         'category': category,
         'title': title,
-        'notes': notes.map((note) => note.toJson()).toList(),
+        'notes': Map.fromIterable(notes,
+            key: (note) => notes.indexOf(note).toString(),
+            value: (note) => (note as Note).toJson()),
       };
 
   // Convert JSON to Entry
-  factory Entry.fromJson(Map<String, dynamic> json, {required String id}) => Entry(
-        id: id,
-        category: json['category'],
-        title: json['title'],
-        notes: (json['notes'] as List? ?? [])
-            .map((noteJson) => Note.fromJson(noteJson as Map<String, dynamic>))
-            .toList(),
-      );
-}
+  // factory Entry.fromJson(Map<String, dynamic> json, {required String id}) =>
+  //     Entry(
+  //       id: id,
+  //       category: json['category'],
+  //       title: json['title'],
+  //       notes: json['notes'] is List
+  //           ? (json['notes'] as List)
+  //               .map((noteJson) => noteJson is Map<String, dynamic>
+  //                   ? Note.fromJson(noteJson)
+  //                   : null)
+  //               .where((note) => note != null)
+  //               .cast<Note>()
+  //               .toList()
+  //           : [],
+  //     );
 
+      static Entry fromJson(Map<String, dynamic> json, {required String id}) {
+    List<Note> notesList = [];
+    if (json['notes'] != null) {
+      notesList = (json['notes'] as List).map((n) {
+        return Note(
+          noteTitle: n['noteTitle'] as String,
+          content: n['content'] as String,
+        );
+      }).toList();
+    }
+
+    return Entry(
+      id: id,
+      category: json['category'] as String,
+      title: json['title'] as String,
+      notes: notesList,
+    );
+  }
+}
 
 class Note {
   final String noteTitle;
