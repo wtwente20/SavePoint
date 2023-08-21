@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/entry.dart';
-import '../providers/entry_provider.dart'; // Import the unified provider here
+import '../providers/entry_provider.dart';
 
 class AddEntryScreen extends ConsumerWidget {
   final Entry entryData;

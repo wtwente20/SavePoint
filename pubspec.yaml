@@ -37,7 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
 
   # Firebase Authentication
-  # firebase_auth: ^4.7.2
+  firebase_auth: ^4.7.2
 
   # Firestore for database
   # cloud_firestore: ^4.8.4
@@ -46,7 +46,7 @@ dependencies:
   # flutter_form_builder: ^9.1.0
 
   #Google sign in
-  #google_sign_in: ^6.1.4
+  google_sign_in: ^6.1.4
 
   #Expandable
   expandable: ^5.0.1

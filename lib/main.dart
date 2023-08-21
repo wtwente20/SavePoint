@@ -1,8 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:savepoint_app/screens/auth_wrapper.dart';
 
-import 'providers/theme_provider.dart'; // Import your theme provider
+import 'providers/theme_provider.dart';
 import 'screens/home_screen.dart';
 
 var kColorScheme = ColorScheme.fromSeed(
@@ -24,23 +26,32 @@ void main() async {
   );
 }
 
+final authStateChangesProvider = StreamProvider<User?>((ref) {
+  return FirebaseAuth.instance.authStateChanges();
+});
+
 class SavePoint extends ConsumerWidget {
-  const SavePoint({super.key});
+  const SavePoint({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeProvider);
+    final firebaseUserAsyncValue = ref.watch(authStateChangesProvider);
 
     return MaterialApp(
       title: 'SavePoint',
-      darkTheme: ThemeData.dark().copyWith(
-          // ... (all your dark theme configurations here)
-          ),
-      theme: ThemeData().copyWith(
-          // ... (all your light theme configurations here)
-          ),
+      darkTheme: ThemeData.dark().copyWith(),
+      theme: ThemeData().copyWith(),
       themeMode: themeMode,
-      home: HomeScreen(),
+      routes: {
+        '/home': (context) => HomeScreen(),
+        // Add other routes here as necessary
+      },
+      home: firebaseUserAsyncValue.when(
+        data: (firebaseUser) => firebaseUser != null ? HomeScreen() : AuthWrapper(),
+        loading: () => CircularProgressIndicator(), // Display a loading spinner while waiting
+        error: (error, stack) => Center(child: Text('An error occurred')), // Handle error state
+      ),
     );
   }
 }

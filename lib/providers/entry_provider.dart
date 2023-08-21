@@ -1,71 +1,73 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/entry.dart';
+import '../services/auth_service.dart';
 
 class EntryListNotifier extends StateNotifier<List<Entry>> {
-  final DatabaseReference databaseRef =
-      FirebaseDatabase.instance.reference().child('entries');
+  
+  final String uid;
+  final DatabaseReference databaseRef;
 
-  EntryListNotifier()
-      : super([
+  EntryListNotifier(this.uid)
+      : databaseRef = FirebaseDatabase.instance.reference().child('entries').child(uid),
+        super([
           Entry(id: 'default1', category: 'Books', title: '', notes: []),
           Entry(id: 'default2', category: 'Video Games', title: '', notes: []),
-          Entry(
-              id: 'default3', category: 'Tabletop RPGs', title: '', notes: []),
+          Entry(id: 'default3', category: 'Tabletop RPGs', title: '', notes: []),
         ]) {
     _loadEntries();
   }
 
   Future<void> _loadEntries() async {
-  try {
-    DataSnapshot snapshot = (await databaseRef.once()).snapshot;
-    print("Raw Firebase Data: ${snapshot.value}");
+    try {
+      DataSnapshot snapshot = (await databaseRef.once()).snapshot;
+      print("Raw Firebase Data: ${snapshot.value}");
 
-    List<Entry> entries = [];
+      List<Entry> entries = [];
 
-    if (snapshot.value is Map<dynamic, dynamic>) {
-      final rawValues = snapshot.value as Map<dynamic, dynamic>;
-      final Map<String, dynamic> values = {};
+      if (snapshot.value is Map<dynamic, dynamic>) {
+        final rawValues = snapshot.value as Map<dynamic, dynamic>;
+        final Map<String, dynamic> values = {};
 
-      for (var key in rawValues.keys) {
-        if (key is String && rawValues[key] is Map<dynamic, dynamic>) {
-          values[key] = Map<String, dynamic>.from(rawValues[key] as Map);
-        } else {
-          print("Unexpected key or value type in Firebase data: $key");
+        for (var key in rawValues.keys) {
+          if (key is String && rawValues[key] is Map<dynamic, dynamic>) {
+            values[key] = Map<String, dynamic>.from(rawValues[key] as Map);
+          } else {
+            print("Unexpected key or value type in Firebase data: $key");
+          }
+        }
+
+        values.forEach((key, value) {
+          final entry = Entry.fromJson(value, id: key);
+          entries.add(entry);
+        });
+      }
+
+      // Ensure default categories are always present
+      const defaultCategories = [
+        'Books',
+        'Video Games',
+        'Tabletop RPGs',
+      ];
+
+      for (var category in defaultCategories) {
+        if (!entries.any((entry) => entry.category == category)) {
+          entries.add(Entry(
+              id: 'default-${category.hashCode}',
+              category: category,
+              title: '',
+              notes: []));
         }
       }
 
-      values.forEach((key, value) {
-        final entry = Entry.fromJson(value, id: key);
-        entries.add(entry);
-      });
+      state = entries;
+      print("Current state: $state");
+    } catch (error) {
+      print("Error loading entries: $error");
     }
-
-    // Ensure default categories are always present
-    const defaultCategories = [
-      'Books',
-      'Video Games',
-      'Tabletop RPGs',
-    ];
-
-    for (var category in defaultCategories) {
-      if (!entries.any((entry) => entry.category == category)) {
-        entries.add(Entry(
-            id: 'default-${category.hashCode}',
-            category: category,
-            title: '',
-            notes: []));
-      }
-    }
-
-    state = entries;
-    print("Current state: $state");
-  } catch (error) {
-    print("Error loading entries: $error");
   }
-}
-
 
   Future<void> _saveEntry(Entry entry) async {
     try {
@@ -182,4 +184,13 @@ class EntryListNotifier extends StateNotifier<List<Entry>> {
 }
 
 final entryListProvider = StateNotifierProvider<EntryListNotifier, List<Entry>>(
-    (ref) => EntryListNotifier());
+    (ref) {
+  final userAsyncValue = ref.watch(authStateChangesProvider);
+  
+  if (userAsyncValue is AsyncData<User?> && userAsyncValue.value != null) {
+    return EntryListNotifier(userAsyncValue.value!.uid);
+  }
+  
+  // Handle the case where the user is null (e.g., not authenticated) or loading/error states
+  throw Exception("User not authenticated or still loading");
+});

@@ -1,24 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:savepoint_app/screens/sign_in_screen.dart';
 
 import '../data/entry.dart';
 import '../providers/entry_provider.dart';
 import '../providers/theme_provider.dart';
+import '../services/auth_service.dart';
 import '../widgets/category_card.dart';
 import '../widgets/category_dialog.dart';
 import '../widgets/title_dialog.dart';
 import 'add_entry_screen.dart';
 
 class HomeScreen extends ConsumerWidget {
+  final AuthService _authService = AuthService();
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final entries = ref.watch(entryListProvider);
+    final firebaseUser = ref.watch(authStateChangesProvider).when(
+          data: (user) => user,
+          loading: () => null,
+          error: (err, _) => null,
+        );
+
+    final entries = firebaseUser != null ? ref.watch(entryListProvider) : [];
+
     final themeMode = ref.watch(themeProvider);
 
     void _addNewCategory(String category) {
-      ref
-          .read(entryListProvider.notifier)
-          .addCategory(category);
+      ref.read(entryListProvider.notifier).addCategory(category);
     }
 
     void _addNewTitle(String category) async {
@@ -32,8 +41,7 @@ class HomeScreen extends ConsumerWidget {
     }
 
     void _addOrUpdateEntry(String category, String title) async {
-      final result =
-          await Navigator.of(context).push<Map<String, dynamic>>(
+      final result = await Navigator.of(context).push<Map<String, dynamic>>(
         MaterialPageRoute(
             builder: (BuildContext context) => AddEntryScreen(
                 entryData: Entry(
@@ -43,8 +51,10 @@ class HomeScreen extends ConsumerWidget {
       if (result != null && result['updatedNote'] != null) {
         final oldTitle = result['oldTitle'] ?? '';
         final updatedNote = result['updatedNote'] as Note;
-        
-        ref.read(entryListProvider.notifier).addNoteToTitle(category, oldTitle, updatedNote);
+
+        ref
+            .read(entryListProvider.notifier)
+            .addNoteToTitle(category, oldTitle, updatedNote);
       }
     }
 
@@ -62,6 +72,16 @@ class HomeScreen extends ConsumerWidget {
               } else {
                 ref.read(themeProvider.notifier).state = ThemeMode.light;
               }
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: () async {
+              await _authService.signOut();
+              Navigator.of(context).pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => SignInScreen()),
+                (Route<dynamic> route) => false,
+              );
             },
           ),
         ],
