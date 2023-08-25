@@ -8,7 +8,7 @@ class EditEntryScreen extends ConsumerWidget {
   final Entry entryData;
   final Note editNote;
 
-  EditEntryScreen({required this.entryData, required this.editNote});
+  const EditEntryScreen({super.key, required this.entryData, required this.editNote});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -25,12 +25,12 @@ class EditEntryScreen extends ConsumerWidget {
           children: [
             TextField(
               controller: noteTitleController,
-              decoration: InputDecoration(labelText: 'Note Title'),
+              decoration: const InputDecoration(labelText: 'Note Title'),
             ),
             TextField(
               controller: notesController,
               maxLines: null,
-              decoration: InputDecoration(labelText: 'Your notes here...'),
+              decoration: const InputDecoration(labelText: 'Your notes here...'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -47,7 +47,7 @@ class EditEntryScreen extends ConsumerWidget {
 
                 Navigator.of(context).pop({'updatedNote': updatedNote});
               },
-              child: Text("Update Note"),
+              child: const Text("Update Note"),
             )
           ],
         ),

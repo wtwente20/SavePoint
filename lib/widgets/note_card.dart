@@ -6,7 +6,7 @@ class NoteCard extends StatelessWidget {
   final Note note;
   final VoidCallback? onTap;
 
-  const NoteCard({
+  const NoteCard({super.key, 
     required this.note,
     this.onTap,
   });

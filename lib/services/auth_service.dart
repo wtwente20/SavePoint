@@ -30,6 +30,7 @@ class AuthService {
       print(error);
       return null;
     }
+    return null;
   }
 
   Future<User?> signInWithEmailAndPassword(String email, String password) async {

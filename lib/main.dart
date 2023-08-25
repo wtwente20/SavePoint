@@ -8,7 +8,7 @@ import 'providers/theme_provider.dart';
 import 'screens/home_screen.dart';
 
 var kColorScheme = ColorScheme.fromSeed(
-  seedColor: Color.fromARGB(255, 10, 40, 175),
+  seedColor: const Color.fromARGB(255, 10, 40, 175),
 );
 
 var kDarkColorScheme = ColorScheme.fromSeed(
@@ -20,7 +20,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(
-    ProviderScope(
+    const ProviderScope(
       child: SavePoint(),
     ),
   );
@@ -48,9 +48,9 @@ class SavePoint extends ConsumerWidget {
         // Add other routes here as necessary
       },
       home: firebaseUserAsyncValue.when(
-        data: (firebaseUser) => firebaseUser != null ? HomeScreen() : AuthWrapper(),
-        loading: () => CircularProgressIndicator(), // Display a loading spinner while waiting
-        error: (error, stack) => Center(child: Text('An error occurred')), // Handle error state
+        data: (firebaseUser) => firebaseUser != null ? HomeScreen() : const AuthWrapper(),
+        loading: () => const CircularProgressIndicator(), // Display a loading spinner while waiting
+        error: (error, stack) => const Center(child: Text('An error occurred')), // Handle error state
       ),
     );
   }

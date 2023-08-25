@@ -9,7 +9,7 @@ class CategoryCard extends ConsumerWidget {
   final Function addNewTitleCallback;
   final Function addOrUpdateEntryCallback; // Add this line
 
-  CategoryCard({
+  const CategoryCard({super.key, 
     required this.categoryKey,
     required this.addNewTitleCallback,
     required this.addOrUpdateEntryCallback, // Add this line
@@ -31,16 +31,16 @@ class CategoryCard extends ConsumerWidget {
     title: Row(
       children: [
         Text(categoryKey),
-        SizedBox(width: 8.0),
+        const SizedBox(width: 8.0),
         Container(
-          padding: EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
+          padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
           decoration: BoxDecoration(
             color: Colors.blueAccent,
             borderRadius: BorderRadius.circular(12.0),
           ),
           child: Text(
             '${categoryTitles.length}',  // Display the number of titles
-            style: TextStyle(color: Colors.white, fontSize: 12.0),
+            style: const TextStyle(color: Colors.white, fontSize: 12.0),
           ),
         ),
       ],

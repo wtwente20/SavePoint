@@ -7,6 +7,8 @@ import '../services/auth_service.dart';
 import 'home_screen.dart';
 
 class AuthWrapper extends ConsumerWidget {
+  const AuthWrapper({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final asyncUser = ref.watch(authStateChangesProvider);
@@ -19,6 +21,6 @@ class AuthWrapper extends ConsumerWidget {
       }
     }
 
-    return SignInScreen();
+    return const SignInScreen();
   }
 }

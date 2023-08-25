@@ -10,7 +10,7 @@ import 'note_card.dart';
 class TitleCard extends ConsumerWidget {
   final Entry titleEntry;
 
-  TitleCard({required this.titleEntry});
+  const TitleCard({super.key, required this.titleEntry});
 
   Future<bool> _confirmDeletion(BuildContext context) async {
     return await showDialog(
@@ -62,9 +62,9 @@ Widget build(BuildContext context, WidgetRef ref) {
       key: ValueKey('${titleEntry.title}-${titleNotes.length}'),
       background: Container(
         color: Colors.red,
-        child: const Icon(Icons.delete, color: Colors.white, size: 36),
         alignment: Alignment.centerLeft,
         padding: const EdgeInsets.only(left: 20),
+        child: const Icon(Icons.delete, color: Colors.white, size: 36),
       ),
       direction: DismissDirection.startToEnd,
       confirmDismiss: (direction) => _confirmDeletion(context),
@@ -77,7 +77,7 @@ Widget build(BuildContext context, WidgetRef ref) {
           if (titleNotes.isNotEmpty)
             ListView.builder(
               shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               itemCount: titleNotes.length,
               itemBuilder: (ctx, index) {
                 return NoteCard(

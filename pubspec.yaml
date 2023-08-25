@@ -59,7 +59,10 @@ dependencies:
 
   #firebase core
   firebase_core: ^2.15.1
+
   firebase_database: ^10.2.5
+
+  intro_slider: ^4.2.0
 
 dev_dependencies:
   flutter_test:

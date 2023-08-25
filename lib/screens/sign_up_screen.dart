@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({super.key});
+
   @override
   _SignUpScreenState createState() => _SignUpScreenState();
 }
@@ -22,35 +24,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
       email: _email,
       password: _password,
     );
-    // User registered successfully. Here you can navigate to another screen or show a success message.
-    // For example:
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Registered Successfully!')));
-    // Or navigate to home screen:
-    // Navigator.of(context).pushReplacementNamed(HomeScreen.routeName); // if you have named routes.
-    
+
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Registered Successfully!')));
+    // Navigate back to the sign-in screen:
+    Navigator.pop(context);
+
   } on FirebaseAuthException catch (e) {
     if (e.code == 'weak-password') {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('The password provided is too weak.')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('The password provided is too weak.')));
     } else if (e.code == 'email-already-in-use') {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('The account already exists for that email.')));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('The account already exists for that email.')));
     }
   } catch (e) {
     print(e);
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('An error occurred. Please try again.')));
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('An error occurred. Please try again.')));
   }
 }
+
 
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Sign Up')),
+      appBar: AppBar(title: const Text('Sign Up')),
       body: Form(
         key: _formKey,
         child: Column(
           children: [
             TextFormField(
-              decoration: InputDecoration(labelText: 'Email'),
+              decoration: const InputDecoration(labelText: 'Email'),
               validator: (value) {
                 if (value == null || !value.contains('@')) {
                   return 'Please enter a valid email address.';
@@ -62,7 +64,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               },
             ),
             TextFormField(
-              decoration: InputDecoration(labelText: 'Password'),
+              decoration: const InputDecoration(labelText: 'Password'),
               obscureText: true,
               validator: (value) {
                 if (value == null || value.length < 6) {
@@ -75,8 +77,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
               },
             ),
             ElevatedButton(
-              child: Text('Sign Up'),
               onPressed: _signUp,
+              child: const Text('Sign Up'),
             ),
           ],
         ),

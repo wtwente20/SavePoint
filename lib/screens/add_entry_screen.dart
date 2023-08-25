@@ -8,7 +8,7 @@ class AddEntryScreen extends ConsumerWidget {
   final Entry entryData;
   final Note? editNote;
 
-  AddEntryScreen({required this.entryData, this.editNote});
+  const AddEntryScreen({super.key, required this.entryData, this.editNote});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -26,12 +26,12 @@ class AddEntryScreen extends ConsumerWidget {
           children: [
             TextField(
               controller: noteTitleController,
-              decoration: InputDecoration(labelText: 'Note Title'),
+              decoration: const InputDecoration(labelText: 'Note Title'),
             ),
             TextField(
               controller: notesController,
               maxLines: null,
-              decoration: InputDecoration(labelText: 'Your notes here...'),
+              decoration: const InputDecoration(labelText: 'Your notes here...'),
             ),
             ElevatedButton(
               onPressed: () {

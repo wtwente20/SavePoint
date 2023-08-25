@@ -6,6 +6,8 @@ import 'package:savepoint_app/screens/sign_up_screen.dart';
 import 'forgot_password_screen.dart';
 
 class SignInScreen extends StatefulWidget {
+  const SignInScreen({super.key});
+
   @override
   _SignInScreenState createState() => _SignInScreenState();
 }
@@ -68,7 +70,7 @@ class _SignInScreenState extends State<SignInScreen> {
       } catch (error) {
         print(error);
         ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text("Error logging in. Please try again.")));
+            const SnackBar(content: Text("Error logging in. Please try again.")));
       }
     }
   }
@@ -76,7 +78,7 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('SavePoint Login')),
+      appBar: AppBar(title: const Text('SavePoint Login')),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Form(
@@ -84,24 +86,24 @@ class _SignInScreenState extends State<SignInScreen> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Container(
+                SizedBox(
                   height: 200,
                   width: 200,
                   child: Image.asset(
                       'assets/SavepointLogo1.png'),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 TextFormField(
-                  decoration: InputDecoration(labelText: 'Email'),
+                  decoration: const InputDecoration(labelText: 'Email'),
                   onSaved: (value) => _email = value!,
                   validator: (value) {
                     if (value!.isEmpty) return "Please enter your email.";
                     return null;
                   },
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 TextFormField(
-                  decoration: InputDecoration(labelText: 'Password'),
+                  decoration: const InputDecoration(labelText: 'Password'),
                   obscureText: true,
                   onSaved: (value) => _password = value!,
                   validator: (value) {
@@ -109,26 +111,26 @@ class _SignInScreenState extends State<SignInScreen> {
                     return null;
                   },
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 TextButton(
-                  child: Text('Forgot password?'),
+                  child: const Text('Forgot password?'),
                   onPressed: () {
                     // Navigate to ForgotPasswordScreen
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (ctx) => ForgotPasswordScreen()));
+                        builder: (ctx) => const ForgotPasswordScreen()));
                   },
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 ElevatedButton(
-                  child: Text('Login'),
                   onPressed: _signInWithEmailAndPassword,
+                  child: const Text('Login'),
                 ),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 TextButton(
-                  child: Text('Don\'t have an account? Register here!'),
+                  child: const Text('Don\'t have an account? Register here!'),
                   onPressed: () {
                     Navigator.of(context).push(
-                        MaterialPageRoute(builder: (ctx) => SignUpScreen()));
+                        MaterialPageRoute(builder: (ctx) => const SignUpScreen()));
                   },
                 ),
               ],

@@ -9,7 +9,7 @@ class ViewEntryScreen extends ConsumerWidget {
   final Entry entryData;
   final Note noteData;
 
-  ViewEntryScreen({required this.entryData, required this.noteData});
+  const ViewEntryScreen({super.key, required this.entryData, required this.noteData});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -20,7 +20,7 @@ class ViewEntryScreen extends ConsumerWidget {
         title: Text(noteData.noteTitle),
         actions: [
           IconButton(
-            icon: Icon(Icons.edit),
+            icon: const Icon(Icons.edit),
             onPressed: () async {
               final result = await Navigator.of(context).push(
                 MaterialPageRoute(
@@ -38,7 +38,7 @@ class ViewEntryScreen extends ConsumerWidget {
             },
           ),
           IconButton(
-            icon: Icon(Icons.delete),
+            icon: const Icon(Icons.delete),
             onPressed: () {
               notifier.removeNoteFromEntry(entryData, noteData);
               Navigator.pop(context);
@@ -53,9 +53,9 @@ class ViewEntryScreen extends ConsumerWidget {
           children: [
             Text(
               noteData.noteTitle,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(noteData.content),
           ],
         ),

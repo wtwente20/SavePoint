@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class AddTitleButton extends StatelessWidget {
   final VoidCallback onAddTitle;
 
-  AddTitleButton({required this.onAddTitle});
+  const AddTitleButton({super.key, required this.onAddTitle});
 
   @override
   Widget build(BuildContext context) {
