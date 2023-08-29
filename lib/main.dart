@@ -1,24 +1,52 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:savepoint_app/screens/auth_wrapper.dart';
 
 import 'providers/theme_provider.dart';
 import 'screens/home_screen.dart';
 
-var kColorScheme = ColorScheme.fromSeed(
-  seedColor: const Color.fromARGB(255, 10, 40, 175),
-);
+Future main() async {  // <-- Make main() async
+  await dotenv.load(fileName: ".env");  // <-- Load the .env file
 
-var kDarkColorScheme = ColorScheme.fromSeed(
-  brightness: Brightness.dark,
-  seedColor: const Color.fromARGB(255, 5, 99, 125),
-);
-
-void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+
+  // Define required keys
+const requiredEnvKeys = [
+  'API_KEY',
+  'AUTH_DOMAIN',
+  'DATABASE_URL',
+  'PROJECT_ID',
+  'STORAGE_BUCKET',
+  'MESSAGING_SENDER_ID',
+  'APP_ID',
+  'MEASUREMENT_ID'
+];
+
+// Validate required keys
+final env = dotenv.env;
+for (final key in requiredEnvKeys) {
+  if (env[key] == null) {
+    throw Exception('$key is missing in .env file');
+  }
+}
+
+// Initialize Firebase using environment variables
+final firebaseOptions = FirebaseOptions(
+  apiKey: env['API_KEY']!,
+  authDomain: env['AUTH_DOMAIN']!,
+  databaseURL: env['DATABASE_URL']!,
+  projectId: env['PROJECT_ID']!,
+  storageBucket: env['STORAGE_BUCKET']!,
+  messagingSenderId: env['MESSAGING_SENDER_ID']!,
+  appId: env['APP_ID']!,
+  measurementId: env['MEASUREMENT_ID']!,
+);
+
+await Firebase.initializeApp(options: firebaseOptions);
+
   runApp(
     const ProviderScope(
       child: SavePoint(),

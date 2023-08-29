@@ -70,7 +70,7 @@ class HomeScreen extends ConsumerWidget {
     void _showGetStartedPopup() {
       Navigator.push(
         context,
-        MaterialPageRoute(builder: (context) => GetStartedScreen()),
+        MaterialPageRoute(builder: (context) => const GetStartedScreen()),
       );
     }
 

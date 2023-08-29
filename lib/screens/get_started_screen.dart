@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../services/data_service.dart';
 
 class GetStartedScreen extends StatefulWidget {
+  const GetStartedScreen({super.key});
+
   @override
   _GetStartedScreenState createState() => _GetStartedScreenState();
 }
@@ -47,12 +49,12 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Get Started"),
+        title: const Text("Get Started"),
         actions: [
           if (_currentPage == slideData.length - 1)
             TextButton(
-              child: Text("Done"),
               onPressed: onDonePress,
+              child: const Text("Done"),
             )
         ],
       ),
@@ -74,15 +76,15 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
                   children: [
                     Text(
                       slideData[index]['title'] as String,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Text(
                       slideData[index]['description'] as String,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 18,
                       ),
                       textAlign: TextAlign.center,
@@ -94,7 +96,7 @@ class _GetStartedScreenState extends State<GetStartedScreen> {
           ),
           if (_currentPage == slideData.length - 1)
             CheckboxListTile(
-              title: Text("Don't show me again"),
+              title: const Text("Don't show me again"),
               value: dontShowAgain,
               onChanged: (bool? value) {
                 setState(() {

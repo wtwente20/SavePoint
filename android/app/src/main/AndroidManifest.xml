@@ -1,5 +1,7 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <uses-permission android:name="android.permission.INTERNET" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+  package="com.wtwentedev.savepoint_app">
+  
+  <uses-permission android:name="android.permission.INTERNET" />
   
     <application
         android:label="savepoint_app"
